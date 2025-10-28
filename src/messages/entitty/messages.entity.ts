@@ -4,6 +4,7 @@ export class MessagesEntity {
   description: string;
   to: string;
   status: string;
+  date: Date;
 
   constructor(
     id: string,
@@ -11,11 +12,13 @@ export class MessagesEntity {
     desc: string,
     to: string,
     status: string,
+    date: Date,
   ) {
     this.id = id;
     this.name = name;
     this.description = desc;
     this.to = to;
     this.status = status;
+    this.date = date;
   }
 }
