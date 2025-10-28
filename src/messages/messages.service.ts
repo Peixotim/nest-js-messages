@@ -4,6 +4,7 @@ import { MessagesRequest } from './dtos/messages.request.dto';
 import { v1 as uuidv1 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 @Injectable()
 export class MessagesService {
   constructor(
@@ -43,5 +44,40 @@ export class MessagesService {
     }
 
     return findAll;
+  }
+
+  public async modifyStatus(
+    id: string,
+    status: string,
+  ): Promise<MessagesEntity> {
+    const message = await this.messagesRepository.findOneBy({ id });
+
+    if (!message) {
+      throw new HttpException(
+        `Error, the message with ID "${id}" does not exist in our database.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    if (!status) {
+      throw new HttpException(
+        'Error, enter a new status — it cannot be empty.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const validStatuses = ['pending', 'sent', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      throw new HttpException(
+        `Invalid status "${status}". Valid statuses are: ${validStatuses.join(', ')}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    message.status = status;
+
+    const updated = await this.messagesRepository.save(message);
+
+    return updated;
   }
 }
