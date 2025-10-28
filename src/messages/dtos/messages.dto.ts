@@ -23,4 +23,7 @@ export class MessagesDto {
   @IsDate()
   @IsOptional()
   date: Date;
+
+  @IsString()
+  from: string;
 }
