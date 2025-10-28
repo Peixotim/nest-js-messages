@@ -1,15 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('messages')
 export class MessagesEntity {
   @PrimaryGeneratedColumn('uuid') //Definir o auto-generate como uuid
   id: string;
-  @Column()
+
+  @Column({ type: 'varchar', length: 255 })
   name: string;
+  @Column({ type: 'varchar', length: 255 })
   description: string;
+  @Column({ type: 'varchar', length: 50 })
   to: string;
+  @Column({ type: 'varchar', length: 50 })
   from: string;
+  @Column({ type: 'varchar', length: 50 })
   status: string;
+  @CreateDateColumn()
   date: Date;
 
   constructor(

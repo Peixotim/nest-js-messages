@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MessagesEntity } from './entitty/messages.entity';
 import { MessagesRequest } from './dtos/messages.request.dto';
 import { v1 as uuidv1 } from 'uuid';
@@ -25,7 +25,20 @@ export class MessagesService {
       request.to === null ||
       request.from === null
     ) {
-      throw new BadRequestException('Error, fill in all fields!');
+      throw new HttpException(
+        `Error, fill in all fields!`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
+  }
+
+  public getAll(): MessagesEntity[] {
+    if (this.arrayMessages.length === null) {
+      throw new HttpException(
+        `Error there is no task registered in our database`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return this.arrayMessages;
   }
 }
