@@ -2,12 +2,17 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MessagesEntity } from './entitty/messages.entity';
 import { MessagesRequest } from './dtos/messages.request.dto';
 import { v1 as uuidv1 } from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 @Injectable()
 export class MessagesService {
-  private arrayMessages: MessagesEntity[] = [];
+  constructor(
+    @InjectRepository(MessagesEntity)
+    private readonly messagesRepository: Repository<MessagesEntity>,
+  ) {}
 
-  public create(request: MessagesRequest) {
-    const newUser: MessagesEntity = {
+  public async create(request: MessagesRequest) {
+    const newMessage = this.messagesRepository.create({
       id: uuidv1(),
       name: request.name,
       description: request.description,
@@ -15,16 +20,11 @@ export class MessagesService {
       status: 'pending',
       to: request.to,
       from: request.from,
-    };
+    });
 
-    this.arrayMessages.push(newUser);
+    await this.messagesRepository.save(newMessage);
 
-    if (
-      request.name == null ||
-      request.description === null ||
-      request.to === null ||
-      request.from === null
-    ) {
+    if (!request.name || !request.description || !request.to || !request.from) {
       throw new HttpException(
         `Error, fill in all fields!`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -32,13 +32,16 @@ export class MessagesService {
     }
   }
 
-  public getAll(): MessagesEntity[] {
-    if (this.arrayMessages.length === null) {
+  public async getAll(): Promise<MessagesEntity[]> {
+    const findAll = await this.messagesRepository.find();
+
+    if (findAll.length === 0) {
       throw new HttpException(
-        `Error there is no task registered in our database`,
+        `Error, there is no message registered in our database !`,
         HttpStatus.NOT_FOUND,
       );
     }
-    return this.arrayMessages;
+
+    return findAll;
   }
 }
