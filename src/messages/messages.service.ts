@@ -46,6 +46,19 @@ export class MessagesService {
     return findAll;
   }
 
+  public async deleteMessage(id: string): Promise<MessagesEntity> {
+    const message = await this.messagesRepository.findOneBy({ id });
+
+    if (!message) {
+      throw new HttpException(
+        `Error, the message with ID "${id}" does not exist in our database.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    await this.messagesRepository.delete(id);
+
+    return message;
+  }
   public async modifyStatus(
     id: string,
     status: string,

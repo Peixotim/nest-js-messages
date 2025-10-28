@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -36,5 +37,11 @@ export class MessagesController {
     @Body() body: MessagesUpdateStatus,
   ): Promise<MessagesEntity> {
     return await this.messagesService.modifyStatus(id, body.status);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async delete(@Param('id') id: string): Promise<MessagesEntity> {
+    return this.messagesService.deleteMessage(id);
   }
 }
