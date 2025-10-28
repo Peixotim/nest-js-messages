@@ -93,4 +93,15 @@ export class MessagesService {
 
     return updated;
   }
+
+  public async findByName(name: string): Promise<MessagesEntity> {
+    const findByName = await this.messagesRepository.findOneBy({ name });
+    if (findByName === null) {
+      throw new HttpException(
+        `Error, the message with NAME "${name}" does not exist in our database.`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    return findByName;
+  }
 }

@@ -30,6 +30,12 @@ export class MessagesController {
     return await this.messagesService.getAll();
   }
 
+  @Get(':name')
+  @HttpCode(HttpStatus.OK)
+  public async findByName(name: string): Promise<MessagesEntity> {
+    return await this.messagesService.findByName(name);
+  }
+
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
   public async modifyName(
